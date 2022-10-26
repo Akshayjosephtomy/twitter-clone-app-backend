@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.GeneratedValue;
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class TwitterController {
@@ -50,14 +52,22 @@ public class TwitterController {
 
     @CrossOrigin(origins = "*")
     @PostMapping(path = "/viewmypost",consumes = "application/json",produces = "application/json")
-    public List<PostModel>viewmypost(@RequestBody PostModel post){
-        return (List<PostModel>) daop.myPosts(post.getUserid());
+    public List<Map<String,String>>viewmypost(@RequestBody PostModel post){
+        return (List<Map<String,String>>) daop.myPosts(post.getUserid());
     }
 
     @CrossOrigin(origins = "*")
     @GetMapping("/viewpost")
-    public List<String> viewpost(){
-        return (List<String>) daop.viewPost();
+    public List<Map<String,String>> viewpost(){
+        return (List<Map<String,String>>) daop.viewPost();
+    }
+
+    @CrossOrigin(origins = "*")
+    @Transactional
+    @PostMapping(path = "/deletepost",consumes = "application/json",produces = "application/json")
+    public String deletepost(@RequestBody PostModel post){
+        daop.deletePost(post.getId());
+        return "(status:'success')";
     }
 
 
